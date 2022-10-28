@@ -1,36 +1,19 @@
 #!/usr/bin/env bash
-# A Bash script that sets up my web servers for the deployment of web_static
-
-# Install Nginx if not already installed
-apt -y update
-apt install -y nginx
-
-# Create the folders:
-#+ /data/ 
-#+ /data/web_static/
-#+ /data/web_static/releases/
+# Installs Nginx if not installed
+#+ Creates folders /data/web_static/shared
+#+	and /adta/releases/test if not exists
+#+ /data/web_static/current linked to
 #+ /data/web_static/releases/test/
-#+ /data/web_static/shared/     
-mkdir -p /data/web_static/releases/test/ /data/web_static/shared/
+#+ Creates an /data/web_static/releases/test/index.html
+#+ Configures Nginx to serve /data/web_static/current/ 
+#+	to hbnb_static
 
-HTML_TEMP=\
-"<html>
-  <head>
-  </head>
-  <body>
-    Holberton School
-  </body>
-</html>"
-
-echo "$HTML_TEMP" > /data/web_static/releases/test/index.html
-
-# Create symlink current for releases/test/ directory
-ln -fs /data/web_static/releases/test/ /data/web_static/current
-
-# Give ownership of data folder to ubuntu
-chown -R ubuntu:ubuntu /data/
-
-sed -i '38i\\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n' /etc/nginx/sites-enabled/default
-
-# restart nginx service
-service nginx restart
+sudo apt-get -y update
+sudo apt-get -y upgrade
+sudo apt-get -y install nginx
+sudo mkdir -p /data/web_static/releases/test /data/web_static/shared
+echo "Welcome to The_Masterminds home" | sudo tee /data/web_static/releases/test/index.html
+sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
+sudo chown -hR ubuntu:ubuntu /data/
+sudo sed -i '38i\\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n' /etc/nginx/sites-available/default
+sudo service nginx start
